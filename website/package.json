@@ -5,6 +5,6 @@
     "start": "npx serve -s ."
   },
   "dependencies": {
-    "serve": "^14.2.5"
+    "serve": "^14.2.1"
   }
 }
