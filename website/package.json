@@ -2,6 +2,9 @@
   "name": "premium_store",
   "version": "1.0.0",
   "scripts": {
-    "start": "npx serve ."
+    "start": "npx serve -s ."
+  },
+  "dependencies": {
+    "serve": "^14.2.5"
   }
 }
