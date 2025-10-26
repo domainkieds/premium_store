@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Contact</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Additional form layout fixes (consistent with checkout page) */
+    .contact-form {
+      display: grid;
+      gap: 1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .contact-form label {
+      display: flex;
+      flex-direction: column;
+      font-weight: 500;
+      color: #3a2e25;
+      font-size: 0.95rem;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+      margin-top: 6px;
+      padding: 10px 12px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: 'Poppins', sans-serif;
+      width: 100%;
+      box-sizing: border-box;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .contact-form input:focus,
+    .contact-form textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(139, 107, 79, 0.2);
+      outline: none;
+    }
+
+    .contact-form button {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.25s ease;
+    }
+
+    .contact-form button:hover {
+      background: #6e523c;
+    }
+
+    @media (min-width: 768px) {
+      .contact-form {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .contact-form label:nth-child(3),
+      .contact-form button {
+        grid-column: span 2;
+      }
+    }
+
+    .status-message {
+      text-align: center;
+      margin-top: 1rem;
+      font-weight: 500;
+    }
+
+    .status-success {
+      color: green;
+    }
+
+    .status-error {
+      color: red;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="logo-area">
+      <div class="logo-inner">
+        <img src="assets/logo.svg" class="logo-img" alt="logo">
+        <div class="brand">
+          <div class="brand-title">ArKey's</div>
+          <div class="brand-sub">Premium Accounts</div>
+        </div>
+      </div>
+    </div>
+    <nav class="nav">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="products.html" class="nav-link">Products</a>
+      <a href="about.html" class="nav-link">About</a>
+      <a href="contact.html" class="nav-link active">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="container narrow">
+      <article class="content-card">
+        <h1>Contact</h1>
+        <p>Questions? Send us a message.</p>
+
+        <form class="contact-form" id="contactForm">
+          <label>
+            Name
+            <input type="text" name="name" required>
+          </label>
+
+          <label>
+            Email
+            <input type="email" name="email" required>
+          </label>
+
+          <label>
+            Message
+            <textarea name="message" rows="5" required></textarea>
+          </label>
+
+          <button type="submit" class="btn btn-primary">Send message</button>
+        </form>
+
+        <div id="statusMessage" class="status-message"></div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="site-footer">© <span id="yc"></span> ArKey's PREMIUMS</footer>
+
+  <script>
+    document.getElementById('yc').textContent = new Date().getFullYear();
+
+    const form = document.getElementById('contactForm');
+    const statusDiv = document.getElementById('statusMessage');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = {
+        name: form.name.value.trim(),
+        email: form.email.value.trim(),
+        message: form.message.value.trim(),
+      };
+
+      statusDiv.textContent = 'Sending...';
+      statusDiv.className = 'status-message';
+
+      try {
+        // ⚙️ Update this URL to your Railway backend domain:
+        const response = await fetch('https://your-backend.up.railway.app/send-contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.ok) {
+          statusDiv.textContent = 'Message sent successfully!';
+          statusDiv.classList.add('status-success');
+          form.reset();
+        } else {
+          statusDiv.textContent = result.message || 'Failed to send message.';
+          statusDiv.classList.add('status-error');
+        }
+      } catch (err) {
+        statusDiv.textContent = 'Error sending message. Please try again later.';
+        statusDiv.classList.add('status-error');
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Products</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css"></head>
+<body>
+  <header class="site-header"><div class="logo-area"><div class="logo-inner"><img src="assets/logo.svg" class="logo-img" alt="logo"><div class="brand"><div class="brand-title">ArKey's</div><div class="brand-sub">Premium Accounts</div></div></div></div>
+  <nav class="nav"><a href="index.html" class="nav-link">Home</a><a href="products.html" class="nav-link active">Products</a><a href="about.html" class="nav-link">About</a><a href="contact.html" class="nav-link">Contact</a><a href="checkout.html" class="nav-cta">Checkout (<span id="pcartCount">0</span>)</a></nav></header>
+
+  <main>
+  <section class="products-grid">
+    <h1 class="section-title">Catalog</h1>
+
+    <div class="product-grid" id="productGrid">
+
+      <div class="card">
+        <div class="card-media">
+          <img src="assets/premium1.jpg" alt="Premium 1 Month">
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">1 Month Premium</h3>
+          <p class="card-desc">Access premium features for one month.</p>
+          <div class="card-foot">
+            <span class="price">₱9.99</span>
+            <button class="btn btn-primary" 
+                    onclick="addToCart('p1','1 Month Premium',9.99)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-media">
+          <img src="assets/premium3.jpg" alt="Premium 3 Months">
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">3 Months Premium</h3>
+          <p class="card-desc">Enjoy full access for 3 months.</p>
+          <div class="card-foot">
+            <span class="price">$24.99</span>
+            <button class="btn btn-primary" 
+                    onclick="addToCart('p2','3 Months Premium',24.99)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-media">
+          <img src="assets/premium12.jpg" alt="Premium 12 Months">
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">12 Months Premium</h3>
+          <p class="card-desc">Get the best value with a 1-year plan.</p>
+          <div class="card-foot">
+            <span class="price">$79.99</span>
+            <button class="btn btn-primary" 
+                    onclick="addToCart('p3','12 Months Premium',79.99)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+
+  <footer class="site-footer">© <span id="y"></span> ArKey's PREMIUMS</footer>
+  <script src="script.js"></script>
+  <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
+</body>
+</html>

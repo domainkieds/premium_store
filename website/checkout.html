@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Checkout</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    /* === Checkout Layout Fixes === */
+    .checkout-form .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+    .checkout-form label {
+      display: flex;
+      flex-direction: column;
+      font-weight: 500;
+      color: #3a2e25;
+      font-size: 0.95rem;
+    }
+    .checkout-form input,
+    .checkout-form textarea {
+      margin-top: 6px;
+      padding: 10px 12px;
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 10px;
+      font-size: 1rem;
+      font-family: 'Poppins', sans-serif;
+      width: 100%;
+      box-sizing: border-box;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .checkout-form input:focus,
+    .checkout-form textarea:focus {
+      border-color: var(--accent, #8b6b4f);
+      box-shadow: 0 0 0 3px rgba(139, 107, 79, 0.2);
+      outline: none;
+    }
+    .full-width { grid-column: 1 / -1; }
+
+    /* === Order Summary === */
+    .order-summary {
+      background: #fff;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      margin-bottom: 12px;
+    }
+    .order-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px dashed rgba(0,0,0,0.08);
+      padding: 8px 0;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .order-line:last-child { border-bottom: none; }
+    .order-line strong { font-weight: 600; }
+    .order-line small { color: #777; font-size: 0.9rem; }
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .qty-controls button {
+      background: #f0f0f0;
+      border: none;
+      border-radius: 6px;
+      width: 28px;
+      height: 28px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    .qty-controls input {
+      width: 48px;
+      text-align: center;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 4px;
+    }
+    .remove-btn {
+      background: none;
+      border: none;
+      color: #b33;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .order-total {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+      margin-top: 12px;
+      font-size: 1.1rem;
+    }
+    .btn-secondary {
+      background: #eee;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 14px;
+      cursor: pointer;
+      color: #333;
+      transition: background 0.2s;
+    }
+    .btn-secondary:hover { background: #ddd; }
+
+    .status-message {
+      text-align: center;
+      margin-top: 1rem;
+      font-weight: 500;
+    }
+    .status-success { color: green; }
+    .status-error { color: red; }
+  </style>
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="logo-area">
+      <div class="logo-inner">
+        <img src="assets/logo.svg" class="logo-img" alt="logo">
+        <div class="brand">
+          <div class="brand-title">ArKey's</div>
+          <div class="brand-sub">Premium Accounts</div>
+        </div>
+      </div>
+    </div>
+    <nav class="nav">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="products.html" class="nav-link">Products</a>
+      <a href="checkout.html" class="nav-link active">Checkout</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="container narrow">
+      <article class="content-card">
+        <h1>Checkout</h1>
+
+        <form id="checkoutForm" class="checkout-form">
+          <div class="form-grid">
+            <label>Full name <input type="text" name="fullname" required></label>
+            <label>Email <input type="email" name="email" required></label>
+            <label>Phone <input type="tel" name="phone" required></label>
+            <label class="full-width">Mailing address <textarea name="address" rows="3" required></textarea></label>
+            <label class="full-width">Notes (optional) <textarea name="notes" rows="3"></textarea></label>
+          </div>
+
+          <h2>Order summary</h2>
+          <div class="order-summary" id="orderSummary"><p>Your cart is empty.</p></div>
+          <button type="button" id="clearCart" class="btn-secondary" style="margin-top:10px;">Clear cart</button>
+
+          <button type="submit" class="btn btn-primary full-width" style="margin-top:10px;">Submit order</button>
+          <div id="statusMessage" class="status-message"></div>
+
+          <p class="note muted" style="margin-top: 12px;">
+            After you submit, we'll email your order to the shop owner for manual processing.
+          </p>
+        </form>
+      </article>
+    </section>
+  </main>
+
+  <footer class="site-footer">© <span id="yearc"></span> ArKey's PREMIUMS</footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const orderSummary = document.getElementById("orderSummary");
+      const clearBtn = document.getElementById("clearCart");
+      const checkoutForm = document.getElementById("checkoutForm");
+      const statusDiv = document.getElementById("statusMessage");
+      const CART_KEY = "premium_shop_cart_v1";
+
+      function loadCart() {
+        return JSON.parse(localStorage.getItem(CART_KEY)) || [];
+      }
+
+      function saveCart(cart) {
+        localStorage.setItem(CART_KEY, JSON.stringify(cart));
+      }
+
+      function renderCart() {
+        const cart = loadCart();
+        if (cart.length === 0) {
+          orderSummary.innerHTML = "<p>Your cart is empty.</p>";
+          if (clearBtn) clearBtn.style.display = "none";
+          return;
+        }
+        if (clearBtn) clearBtn.style.display = "inline-block";
+
+        let total = 0;
+        let html = "";
+        cart.forEach(item => {
+          const lineTotal = item.price * item.qty;
+          total += lineTotal;
+          html += `
+            <div class="order-line" data-id="${item.id}">
+              <div>
+                <strong>${item.title}</strong><br>
+                <small>$${item.price.toFixed(2)} each</small>
+              </div>
+              <div class="qty-controls">
+                <button class="dec">−</button>
+                <input type="number" min="1" value="${item.qty}">
+                <button class="inc">+</button>
+              </div>
+              <div><strong>$${lineTotal.toFixed(2)}</strong></div>
+              <button class="remove-btn">Remove</button>
+            </div>`;
+        });
+        html += `<div class="order-total"><div>Total</div><div>$${total.toFixed(2)}</div></div>`;
+        orderSummary.innerHTML = html;
+      }
+
+      orderSummary.addEventListener("click", (e) => {
+        const btn = e.target;
+        const line = btn.closest(".order-line");
+        if (!line) return;
+        const id = line.dataset.id;
+        let cart = loadCart();
+        const item = cart.find(i => i.id === id);
+        if (!item) return;
+
+        if (btn.classList.contains("inc")) {
+          item.qty++;
+        } else if (btn.classList.contains("dec")) {
+          item.qty = Math.max(1, item.qty - 1);
+        } else if (btn.classList.contains("remove-btn")) {
+          cart = cart.filter(i => i.id !== id);
+        } else return;
+
+        saveCart(cart);
+        renderCart();
+      });
+
+      orderSummary.addEventListener("input", (e) => {
+        if (e.target.type === "number") {
+          const line = e.target.closest(".order-line");
+          const id = line.dataset.id;
+          let cart = loadCart();
+          const item = cart.find(i => i.id === id);
+          if (!item) return;
+          item.qty = Math.max(1, Number(e.target.value));
+          saveCart(cart);
+          renderCart();
+        }
+      });
+
+      if (clearBtn) {
+        clearBtn.addEventListener("click", () => {
+          if (confirm("Are you sure you want to clear your cart?")) {
+            localStorage.removeItem(CART_KEY);
+            renderCart();
+          }
+        });
+      }
+
+      // 📨 Handle checkout submission
+      checkoutForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const cart = loadCart();
+        if (cart.length === 0) {
+          statusDiv.textContent = "Your cart is empty.";
+          statusDiv.className = "status-message status-error";
+          return;
+        }
+
+        const data = {
+          name: checkoutForm.fullname.value.trim(),
+          email: checkoutForm.email.value.trim(),
+          phone: checkoutForm.phone.value.trim(),
+          address: checkoutForm.address.value.trim(),
+          notes: checkoutForm.notes.value.trim(),
+          items: cart,
+          subtotal: cart.reduce((sum, i) => sum + i.price * i.qty, 0),
+          createdAt: new Date().toISOString()
+        };
+
+        statusDiv.textContent = "Submitting order...";
+        statusDiv.className = "status-message";
+
+        try {
+          // ⚙️ Update this with your Railway backend URL
+          const res = await fetch("https://your-backend.up.railway.app/send-order", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+          });
+
+          const result = await res.json();
+
+          if (res.ok && result.ok) {
+            statusDiv.textContent = "Order sent successfully!";
+            statusDiv.className = "status-message status-success";
+            localStorage.removeItem(CART_KEY);
+            renderCart();
+            checkoutForm.reset();
+          } else {
+            statusDiv.textContent = result.message || "Failed to send order.";
+            statusDiv.className = "status-message status-error";
+          }
+        } catch (err) {
+          console.error(err);
+          statusDiv.textContent = "Network error. Please try again later.";
+          statusDiv.className = "status-message status-error";
+        }
+      });
+
+      renderCart();
+    });
+  </script>
+</body>
+</html>

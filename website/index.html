@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>ArKey's PREMIUMS — Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css"></head>
+<body>
+  <header class="site-header">
+    <div class="logo-area"><div class="logo-inner"><img src="assets/logo.svg" class="logo-img" alt="logo"><div class="brand"><div class="brand-title">ArKey's</div><div class="brand-sub">Premium membership & services</div></div></div></div>
+    <nav class="nav"><a href="index.html" class="nav-link active">Home</a><a href="products.html" class="nav-link">Products</a><a href="about.html" class="nav-link">About</a><a href="contact.html" class="nav-link">Contact</a><a href="checkout.html" class="nav-cta">Checkout (<span id="cartCount">0</span>)</a></nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-left">
+        <h1 class="hero-title">Discover exclusive deals on authentic software licenses and digital subscriptions today<br><span class="accent">for discerning customers</span></h1>
+        <p class="hero-lead">Elegant service, secure process — activate your premium account after simple mail payment. Human-verified, premium support.</p>
+        <div class="hero-actions"><a class="btn btn-primary" href="products.html">Browse products</a><a class="btn btn-outline" href="about.html">How it works</a></div>
+      </div>
+      <div class="hero-right"><div class="hero-card"><img src="assets/heroism.svg" class="hero-img" alt="hero"></div></div>
+    </section>
+
+    <section class="featured">
+      <h2 class="section-title">Featured Products</h2>
+      <div class="product-grid" id="featuredProducts"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="footer-inner">© <span id="year"></span> ArKey's PREMIUMS</div></footer>
+
+  <script src="script.js"></script>
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
